@@ -1,38 +1,22 @@
-# Assignment 4 — Facade pattern
+# Assignment 4 — Facade
 
-A small Java program for ordering pizza. The menu has Margherita (2000 KZT) and Pepperoni (2500 KZT). One order can contain 1–3 pizzas of the same type. Payment and cooking are simulated in memory.
+A Java pizzeria example. Each order is for one pizza: Margherita (2000 KZT) or Pepperoni (2500 KZT). There are ingredients for five pizzas. Payment and baking are simulated.
 
 ## Run
-
-Requires JDK 17 or newer. From the project folder:
 
 ```bash
 javac -d out src/pizzeria/*.java
 java -cp out pizzeria.Main
 ```
 
-`Main` demonstrates two successful orders, a rejected payment and an order rejected because there are not enough ingredients.
+`Main` calls only `OrderFacade.executeOrder("Pepperoni", 3000)`.
 
-## Facade
-
-The client calls `PizzeriaFacade.orderPizza(pizzaName, quantity, paidAmount)`. The facade coordinates four subsystems:
-
-| Class | Responsibility |
-| --- | --- |
-| `PizzaMenu` | Stores prices and provides the recipe for each pizza. |
-| `IngredientStorage` | Checks ingredient amounts and subtracts used portions from stock. |
-| `PizzaKitchen` | Checks oven capacity, heats the oven and requires the correct temperature for baking. |
-| `Cashier` | Checks payment, calculates change and records revenue. |
-
-The facade checks the quantity, pizza name, ingredients and payment before changing stock or accepting money. It then heats the oven, takes ingredients, accepts payment and bakes the pizza. Expected validation errors leave stock and revenue unchanged. This is a single-threaded demonstration.
-
-`Main` knows only the facade. Each subsystem has public methods and no reference to the facade, so another client could use those classes directly. The facade is useful because ordering a pizza takes one call instead of manually coordinating all four classes.
+The facade gets the price from `PizzaMenu`, checks `IngredientStorage`, takes payment through `Cashier`, uses one portion of ingredients and starts `PizzaKitchen`. The client does not need to call these four classes itself. The subsystem classes can also be used separately and do not know about the facade.
 
 ## Clean Code
 
-1. **Meaningful names.** `orderPizza`, `checkAvailability` and `acceptPayment` describe what the methods do.
-2. **Single responsibility.** Each subsystem has one job. The facade coordinates them and does not calculate change or update ingredient amounts itself.
-3. **Encapsulation.** Stock, prices, temperature and revenue are private. The facade accepts simple values and returns a receipt string without exposing its subsystem objects.
-4. **Small methods.** Checking availability and using ingredients are separate operations, which makes their purpose and order easy to follow.
-5. **Error handling.** Invalid quantities, unknown pizzas, insufficient payment and missing ingredients produce clear exceptions. The client reports the error and continues with the next order.
-6. **Named constants.** Oven capacity and baking temperature are constants instead of unexplained numbers inside methods.
+1. Meaningful names: `getPrice`, `pay` and `bake` explain what each method does.
+2. Single responsibility: menu, stock, payment and cooking have separate classes.
+3. Encapsulation: the stock and oven state are private.
+4. Small methods: each method performs one short operation.
+5. Error handling: an unknown pizza, empty stock or failed payment stops the order before ingredients are used.

@@ -1,24 +1,13 @@
 package pizzeria;
 
 public class Cashier {
-    private int revenue;
-
-    public void checkPayment(int total, int paidAmount) {
-        if (total <= 0) {
-            throw new IllegalArgumentException("Total must be positive.");
+    public boolean pay(int price, int money) {
+        if (price <= 0 || money < price) {
+            System.out.println("Payment rejected.");
+            return false;
         }
-        if (paidAmount < total) {
-            throw new IllegalArgumentException("Not enough money. Required: " + total + " KZT.");
-        }
-    }
-
-    public int acceptPayment(int total, int paidAmount) {
-        checkPayment(total, paidAmount);
-        revenue += total;
-        return paidAmount - total;
-    }
-
-    public int getRevenue() {
-        return revenue;
+        int change = money - price;
+        System.out.println("Payment accepted. Change: " + change + " KZT");
+        return true;
     }
 }
